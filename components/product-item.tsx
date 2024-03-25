@@ -1,8 +1,14 @@
 import Image from "next/image";
-import { ShoppingBasket } from "lucide-react";
 
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { ProductDetail } from "./product-detail";
 
 type ProductItemProps = {
   product: Product;
@@ -14,7 +20,7 @@ export const ProductItem = ({ product }: ProductItemProps) => {
       <Image
         src={product.attributes.images.data[0].attributes.url}
         alt={product.attributes.slug}
-        width={500}
+        width={200}
         height={200}
         className="h-[200px] w-[200px] object-contain"
       />
@@ -23,27 +29,39 @@ export const ProductItem = ({ product }: ProductItemProps) => {
       </h2>
 
       <div className="flex items-center gap-x-2">
-        <h2 className="font-semibold text-sm">
-          Rs. {product.attributes.mrp.toFixed(2)}
-        </h2>
-        {product.attributes.sellingPrice && (
-          <h2
-            className={cn(
-              "font-semibold text-sm",
-              product.attributes.sellingPrice &&
-                "line-through text-gray-500 text-xs"
-            )}
-          >
-            Rs. {product.attributes.sellingPrice.toFixed(2)}
+        {product.attributes.sellingPrice ? (
+          <>
+            <h2 className="text-base font-bold">
+              Rs. {product.attributes.sellingPrice.toFixed(2)}
+            </h2>
+            <h2 className="ml-2 text-gray-500 text-sm line-through">
+              Rs. {product.attributes.mrp.toFixed(2)}
+            </h2>
+          </>
+        ) : (
+          <h2 className="text-base font-bold">
+            Rs. {product.attributes.mrp.toFixed(2)}
           </h2>
         )}
       </div>
-      <Button
-        variant="outline"
-        className="text-primary hover:text-white hover:bg-primary"
-      >
-        Add to Cart
-      </Button>
+
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button
+            variant="outline"
+            className="text-primary hover:text-white hover:bg-primary"
+          >
+            Add to Cart
+          </Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogDescription>
+              <ProductDetail product={product} />
+            </DialogDescription>
+          </DialogHeader>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

@@ -86,6 +86,9 @@ interface Product {
     images: {
       data: ImageData[];
     };
+    categories: {
+      data: Category[];
+    };
   };
 }
 

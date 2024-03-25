@@ -5,6 +5,8 @@ import { ProductList } from "@/components/product-list";
 import { getSliders } from "@/utils/getSliders";
 import { getCategories } from "@/utils/getCategories";
 import { getProducts } from "@/utils/getProducts";
+import Image from "next/image";
+import { Footer } from "@/components/footer";
 
 export default async function Home() {
   const sliderData = await getSliders();
@@ -16,6 +18,16 @@ export default async function Home() {
       <Slider sliderData={sliderData} />
       <CategoryList categoryData={categoryData} />
       <ProductList productsData={productsData} />
+
+      <Image
+        src="/banner.png"
+        alt="Banner"
+        width={1000}
+        height={300}
+        className="w-full h-[400px] object-contain mt-4"
+      />
+
+      <Footer />
     </main>
   );
 }

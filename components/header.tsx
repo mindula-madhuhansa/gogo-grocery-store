@@ -17,7 +17,7 @@ export const Header = async () => {
   const categoryData: Category[] = await getCategories();
 
   return (
-    <div className="flex items-center justify-between p-6 shadow-sm">
+    <header className="flex items-center justify-between p-6 shadow-sm">
       <div className="flex items-center gap-x-8">
         <Link href="/">
           <Image src="/logo.png" alt="Logo" width={150} height={100} />
@@ -60,6 +60,6 @@ export const Header = async () => {
         </h3>
         <Button>Log In</Button>
       </div>
-    </div>
+    </header>
   );
 };
