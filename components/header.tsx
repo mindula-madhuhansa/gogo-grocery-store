@@ -25,7 +25,7 @@ export const Header = async () => {
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild className="outline-none">
-            <div className="hidden md:flex items-center gap-x-2 border rounded-full p-2 px-10 bg-slate-200">
+            <div className="hidden md:flex items-center gap-x-2 border rounded-full p-2 px-10 bg-slate-200 cursor-pointer">
               <LayoutGrid className="h-5 w-5" />
               <p>Category</p>
             </div>
@@ -34,15 +34,20 @@ export const Header = async () => {
             <DropdownMenuLabel>Browse Category</DropdownMenuLabel>
             <DropdownMenuSeparator />
             {categoryData.map((category) => (
-              <DropdownMenuItem key={category.id} className="cursor-pointer">
-                <Image
-                  src={category.attributes.icon?.data.attributes.url}
-                  alt={category.attributes.name}
-                  width={20}
-                  height={20}
-                  className="mr-4"
-                />
-                <p className="text-sm">{category.attributes.name}</p>
+              <DropdownMenuItem key={category.id}>
+                <Link
+                  href={`/product-category/${category.attributes.name}`}
+                  className="flex"
+                >
+                  <Image
+                    src={category.attributes.icon?.data.attributes.url}
+                    alt={category.attributes.name}
+                    width={20}
+                    height={20}
+                    className="mr-4"
+                  />
+                  <p className="text-sm">{category.attributes.name}</p>
+                </Link>
               </DropdownMenuItem>
             ))}
           </DropdownMenuContent>

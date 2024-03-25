@@ -25,7 +25,7 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
         alt={product.attributes.slug}
         width={300}
         height={300}
-        className="bg-slate-200 rounded-lg p-5 h-[300px] w-[300px] object-contain"
+        className="bg-white border-2 border-gray-200 rounded-lg p-5 h-[300px] w-[300px] object-contain"
       />
 
       <div className="flex flex-col gap-y-3">
