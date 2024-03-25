@@ -11,8 +11,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { getCategories } from "@/utils/getCategories";
 
-export const Header = () => {
+export const Header = async () => {
+  const categoryData: Category[] = await getCategories();
+
   return (
     <div className="flex items-center justify-between p-6 shadow-sm">
       <div className="flex items-center gap-x-8">
@@ -30,10 +33,18 @@ export const Header = () => {
           <DropdownMenuContent>
             <DropdownMenuLabel>Browse Category</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Profile</DropdownMenuItem>
-            <DropdownMenuItem>Billing</DropdownMenuItem>
-            <DropdownMenuItem>Team</DropdownMenuItem>
-            <DropdownMenuItem>Subscription</DropdownMenuItem>
+            {categoryData.map((category) => (
+              <DropdownMenuItem key={category.id} className="cursor-pointer">
+                <Image
+                  src={category.attributes.icon?.data.attributes.url}
+                  alt={category.attributes.name}
+                  width={20}
+                  height={20}
+                  className="mr-4"
+                />
+                <p className="text-sm">{category.attributes.name}</p>
+              </DropdownMenuItem>
+            ))}
           </DropdownMenuContent>
         </DropdownMenu>
 
