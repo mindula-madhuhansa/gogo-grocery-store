@@ -71,6 +71,24 @@ interface Slider {
   };
 }
 
+interface Product {
+  id: number;
+  attributes: {
+    name: string;
+    description: string;
+    mrp: number;
+    sellingPrice: number;
+    itemQuantityType: string;
+    slug: string;
+    createdAt: string;
+    updatedAt: string;
+    publishedAt: string;
+    images: {
+      data: ImageData[];
+    };
+  };
+}
+
 interface Pagination {
   page: number;
   pageSize: number;

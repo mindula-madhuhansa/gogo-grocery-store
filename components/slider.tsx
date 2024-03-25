@@ -13,8 +13,6 @@ type SliderProps = {
 };
 
 export const Slider = ({ sliderData }: SliderProps) => {
-  console.log(sliderData);
-
   return (
     <Carousel>
       <CarouselContent>

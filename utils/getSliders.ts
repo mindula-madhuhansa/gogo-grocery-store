@@ -5,6 +5,6 @@ export const getSliders = async () => {
     const res = await axiosClient.get("/sliders?populate=*");
     return res.data.data;
   } catch (error) {
-    console.error("Error fetching categories:", error);
+    console.error("Error fetching sliders:", error);
   }
 };
