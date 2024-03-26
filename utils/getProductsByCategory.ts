@@ -11,6 +11,6 @@ export const getProductsByCategory = async ({ category }: Props) => {
     );
     return res.data.data;
   } catch (error) {
-    console.error("Error fetching sliders:", error);
+    console.error("Error fetching Products by Category:", error);
   }
 };

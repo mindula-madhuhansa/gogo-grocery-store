@@ -70,7 +70,11 @@ const SignUpPage = () => {
             disabled={!username || !email || !password}
             onClick={() => handleSignUp()}
           >
-            {loader ? <Loader className="h-5 w-5 animate-spin" /> : "Sign Up"}
+            {loader ? (
+              <Loader className="h-5 w-5 animate-spin text-white" />
+            ) : (
+              "Sign Up"
+            )}
           </Button>
           <p className="text-xs text-right">
             Already have an account?{" "}

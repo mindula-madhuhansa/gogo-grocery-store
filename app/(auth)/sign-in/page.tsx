@@ -62,7 +62,11 @@ const SignInPage = () => {
             type="password"
           />
           <Button disabled={!email || !password} onClick={() => handleSignIn()}>
-            {loader ? <Loader className="h-5 w-5 animate-spin" /> : "Sign In"}
+            {loader ? (
+              <Loader className="h-5 w-5 animate-spin text-white" />
+            ) : (
+              "Sign In"
+            )}
           </Button>
           <p className="text-xs text-right">
             Don&apos;t have an account?{" "}

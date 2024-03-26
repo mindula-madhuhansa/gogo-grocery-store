@@ -92,6 +92,41 @@ interface Product {
   };
 }
 
+interface UserData {
+  id: number;
+  email: string;
+  username: string;
+  blocked: boolean;
+  confirmed: boolean;
+  provider: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface Item {
+  id: number;
+  attributes: {
+    quantity: number;
+    amount: number;
+    createdAt: string;
+    updatedAt: string;
+    publishedAt: string;
+    userId: number;
+    products: Product[];
+  };
+  length: number;
+}
+
+interface CartItem {
+  data: {
+    quantity: number;
+    amount: string;
+    products: number;
+    users_permissions_user: number;
+    userId: number;
+  };
+}
+
 interface Pagination {
   page: number;
   pageSize: number;

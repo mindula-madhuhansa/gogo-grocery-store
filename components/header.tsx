@@ -3,7 +3,7 @@
 import {
   LayoutGrid,
   SearchIcon,
-  ShoppingBag,
+  ShoppingBasket,
   UserCircleIcon,
 } from "lucide-react";
 import Image from "next/image";
@@ -21,23 +21,27 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { getCategories } from "@/utils/getCategories";
+import { useCartItemStore } from "@/store/useCartItemStore";
 
 export const Header = () => {
   const router = useRouter();
   const [categoryData, setCategoryData] = useState<Category[]>([]);
   const [isLogin, setIsLogin] = useState<boolean>(false);
 
+  const { totalItems } = useCartItemStore();
+
   useEffect(() => {
+    const jwt = sessionStorage.getItem("jwt");
+    const user: UserData = JSON.parse(sessionStorage.getItem("user") || "");
+    if (jwt) {
+      setIsLogin(true);
+    }
+
     const fetchCategories = async () => {
       const categories = await getCategories();
       setCategoryData(categories);
     };
     fetchCategories();
-
-    const jwtToken = sessionStorage.getItem("jwt");
-    if (jwtToken) {
-      setIsLogin(true);
-    }
   }, []);
 
   const handleSignOut = () => {
@@ -88,10 +92,13 @@ export const Header = () => {
         </div>
       </div>
 
-      <div className="flex items-center gap-x-6">
-        <h3 className="flex items-center gap-x-2 text-lg">
-          <ShoppingBag className="h-5 w-5" /> 0
-        </h3>
+      <div className="flex items-center gap-x-5">
+        <h2 className="flex items-center gap-x-2 text-lg">
+          <ShoppingBasket className="h-7 w-7" />{" "}
+          <span className="bg-primary pt-1 text-white px-3 rounded-full">
+            {totalItems}
+          </span>
+        </h2>
 
         {!isLogin ? (
           <Link href="/sign-in">

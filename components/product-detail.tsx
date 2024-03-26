@@ -1,22 +1,76 @@
 "use client";
 
 import Image from "next/image";
-import { ShoppingCart } from "lucide-react";
-import { useState } from "react";
+import { Loader, ShoppingCart } from "lucide-react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
+import { addToCart } from "@/utils/addToCart";
+import { getCartItems } from "@/utils/getCartItems";
+import { useCartItemStore } from "@/store/useCartItemStore";
 
 type ProductDetailProps = {
   product: Product;
 };
 
 export const ProductDetail = ({ product }: ProductDetailProps) => {
+  const router = useRouter();
+  const jwt = sessionStorage.getItem("jwt");
+  const user: UserData = JSON.parse(sessionStorage.getItem("user") || "");
+
   const [productTotalPrice, setProductTotalPrice] = useState<number>(
     product.attributes.sellingPrice
       ? product.attributes.sellingPrice
       : product.attributes.mrp
   );
   const [quantity, setQuantity] = useState<number>(1);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const { setTotalItems } = useCartItemStore();
+
+  useEffect(() => {
+    const jwt = sessionStorage.getItem("jwt");
+    const user: UserData = JSON.parse(sessionStorage.getItem("user") || "");
+
+    const fetchCartItems = async () => {
+      const cartItemList: Item = await getCartItems(user.id, jwt);
+      setTotalItems(cartItemList.length);
+    };
+
+    fetchCartItems();
+  }, [setTotalItems]);
+
+  const handleAddToCart = () => {
+    setLoading(true);
+    if (!jwt || !user) {
+      router.push("/sign-in");
+      return;
+    }
+
+    const data: CartItem = {
+      data: {
+        quantity: quantity,
+        amount: (quantity * productTotalPrice).toFixed(2),
+        products: product.id,
+        users_permissions_user: user.id,
+        userId: user.id,
+      },
+    };
+
+    addToCart(data, jwt)
+      .then((res) => {
+        setLoading(false);
+        setTotalItems(1);
+        toast.success("Added to Cart");
+      })
+      .catch((err) => {
+        console.log(err);
+        setLoading(false);
+        toast.error("Something went wrong");
+      });
+  };
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 p-8 bg-white text-black">
@@ -34,7 +88,7 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
           {product.attributes.description}
         </h2>
 
-        <div className="flex items-center gap-x-2">
+        <div className="flex items-center gap-x-2 justify-center">
           {product.attributes.sellingPrice ? (
             <>
               <h2 className="text-2xl font-bold">
@@ -75,8 +129,17 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
               = Rs. {(productTotalPrice * quantity).toFixed(2)}
             </h2>
           </div>
-          <Button className="flex items-center gap-x-3">
-            <ShoppingCart /> Add to Cart
+          <Button
+            onClick={() => handleAddToCart()}
+            className="flex items-center gap-x-3 w-full"
+          >
+            {loading ? (
+              <Loader className="h-5 w-5 text-muted-foreground animate-spin text-white" />
+            ) : (
+              <>
+                <ShoppingCart /> Add to Cart
+              </>
+            )}
           </Button>
         </div>
         <h2>
