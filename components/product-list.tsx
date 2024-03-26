@@ -1,4 +1,4 @@
-import { ProductItem } from "./product-item";
+import { ProductItem } from "@/components/product-item";
 
 type ProductListProps = {
   productsData: Product[];

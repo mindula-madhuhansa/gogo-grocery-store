@@ -56,8 +56,8 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
           (acc, item) => acc + item.quantity,
           0
         );
-
         setTotalItems(totalItems);
+        window.location.reload();
       })
       .catch((err) => {
         console.log(err);

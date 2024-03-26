@@ -2,8 +2,6 @@
 
 import { TrashIcon } from "lucide-react";
 import Image from "next/image";
-import { Button } from "./ui/button";
-import { useEffect, useState } from "react";
 
 type CartItemProps = {
   cartItemList: ItemList[];
@@ -11,19 +9,9 @@ type CartItemProps = {
 };
 
 export const CartItem = ({ cartItemList, onDeleteItem }: CartItemProps) => {
-  const [subtotal, setSubtotal] = useState(0);
-
-  useEffect(() => {
-    let total = 0;
-    cartItemList.forEach((element) => {
-      total = total + element.amount;
-    });
-    setSubtotal(total);
-  }, [cartItemList]);
-
   return (
     <div>
-      <div>
+      <div className="h-[700px] overflow-y-auto">
         {cartItemList.map((item) => (
           <div
             key={item.id}
@@ -50,12 +38,6 @@ export const CartItem = ({ cartItemList, onDeleteItem }: CartItemProps) => {
             />
           </div>
         ))}
-      </div>
-      <div className="absolute w-[90%] bottom-6 flex flex-col">
-        <h2 className="text-lg font-bold flex justify-between mb-2">
-          Subtotal <span>Rs {subtotal}</span>
-        </h2>
-        <Button>View Cart</Button>
       </div>
     </div>
   );

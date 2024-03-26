@@ -8,7 +8,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { ProductDetail } from "./product-detail";
+import { ProductDetail } from "@/components/product-detail";
 
 type ProductItemProps = {
   product: Product;

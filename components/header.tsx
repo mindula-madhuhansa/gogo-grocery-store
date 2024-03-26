@@ -10,6 +10,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -22,6 +23,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import {
   Sheet,
+  SheetClose,
   SheetContent,
   SheetDescription,
   SheetHeader,
@@ -31,19 +33,28 @@ import {
 import { getCategories } from "@/utils/getCategories";
 import { getCartItems } from "@/utils/getCartItems";
 import { useCartItemStore } from "@/store/useCartItemStore";
-import { CartItem } from "./cart-item";
+import { CartItem } from "@/components/cart-item";
 import { deleteCartItem } from "@/utils/deleteCartItem";
-import { toast } from "sonner";
 
 export const Header = () => {
   const router = useRouter();
+
   const [categoryData, setCategoryData] = useState<Category[]>([]);
   const [isLogin, setIsLogin] = useState<boolean>(false);
   const [cartItemList, setCartItemList] = useState<ItemList[]>([]);
+  const [subtotal, setSubtotal] = useState(0);
 
   const { totalItems } = useCartItemStore();
 
   const jwt = sessionStorage.getItem("jwt");
+
+  useEffect(() => {
+    let total = 0;
+    cartItemList.forEach((element) => {
+      total = total + element.amount;
+    });
+    setSubtotal(total);
+  }, [cartItemList]);
 
   useEffect(() => {
     const user: UserData = JSON.parse(sessionStorage.getItem("user") || "");
@@ -141,6 +152,18 @@ export const Header = () => {
                 />
               </SheetDescription>
             </SheetHeader>
+            <SheetClose>
+              <div className="absolute w-[90%] bottom-6 flex flex-col">
+                <h2 className="text-lg font-bold flex justify-between mb-2">
+                  Subtotal <span>Rs. {subtotal}</span>
+                </h2>
+                <Button
+                  onClick={() => router.push(jwt ? "/checkout" : "/sign-in")}
+                >
+                  Checkout
+                </Button>
+              </div>
+            </SheetClose>
           </SheetContent>
         </Sheet>
 
