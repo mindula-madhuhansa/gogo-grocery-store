@@ -32,7 +32,6 @@ import {
 } from "@/components/ui/sheet";
 import { getCategories } from "@/utils/getCategories";
 import { getCartItems } from "@/utils/getCartItems";
-import { useCartItemStore } from "@/store/useCartItemStore";
 import { CartItem } from "@/components/cart-item";
 import { deleteCartItem } from "@/utils/deleteCartItem";
 
@@ -40,13 +39,23 @@ export const Header = () => {
   const router = useRouter();
 
   const [categoryData, setCategoryData] = useState<Category[]>([]);
-  const [isLogin, setIsLogin] = useState<boolean>(false);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [cartItemList, setCartItemList] = useState<ItemList[]>([]);
   const [subtotal, setSubtotal] = useState(0);
 
-  const { totalItems } = useCartItemStore();
-
   const jwt = sessionStorage.getItem("jwt");
+  const user: UserData = JSON.parse(sessionStorage.getItem("user") || "");
+
+  useEffect(() => {
+    const jwt = sessionStorage.getItem("jwt");
+    const user = JSON.parse(sessionStorage.getItem("user") || "{}");
+
+    if (!jwt || !user) {
+      router.push("/sign-in");
+    } else {
+      setIsAuthenticated(true);
+    }
+  }, [router]);
 
   useEffect(() => {
     let total = 0;
@@ -57,25 +66,22 @@ export const Header = () => {
   }, [cartItemList]);
 
   useEffect(() => {
-    const user: UserData = JSON.parse(sessionStorage.getItem("user") || "");
-    if (jwt) {
-      setIsLogin(true);
-    }
-
-    const fetchCategories = async () => {
-      const categories = await getCategories();
-      setCategoryData(categories);
-    };
     fetchCategories();
+  }, []);
 
-    const fetchCartItems = async () => {
-      const cartItemList_ = await getCartItems(user.id, jwt);
-
-      setCartItemList(cartItemList_);
-    };
-
+  useEffect(() => {
     fetchCartItems();
-  }, [jwt]);
+  }, []);
+
+  const fetchCategories = async () => {
+    const categories = await getCategories();
+    setCategoryData(categories);
+  };
+
+  const fetchCartItems = async () => {
+    const cartItemList_ = await getCartItems(user.id, jwt);
+    setCartItemList(cartItemList_);
+  };
 
   const handleSignOut = () => {
     sessionStorage.clear();
@@ -88,6 +94,10 @@ export const Header = () => {
       window.location.reload();
     });
   };
+
+  if (!isAuthenticated) {
+    return null;
+  }
 
   return (
     <header className="flex items-center justify-between p-6 shadow-sm">
@@ -138,7 +148,7 @@ export const Header = () => {
             <h2 className="flex items-center gap-x-2 text-lg">
               <ShoppingBasket className="h-7 w-7" />{" "}
               <span className="bg-primary pt-1 text-white px-3 rounded-full">
-                {totalItems}
+                {cartItemList.length}
               </span>
             </h2>
           </SheetTrigger>
@@ -155,7 +165,7 @@ export const Header = () => {
             <SheetClose>
               <div className="absolute w-[90%] bottom-6 flex flex-col">
                 <h2 className="text-lg font-bold flex justify-between mb-2">
-                  Subtotal <span>Rs. {subtotal}</span>
+                  Subtotal <span>Rs. {subtotal.toFixed(2)}</span>
                 </h2>
                 <Button
                   onClick={() => router.push(jwt ? "/checkout" : "/sign-in")}
@@ -167,7 +177,7 @@ export const Header = () => {
           </SheetContent>
         </Sheet>
 
-        {!isLogin ? (
+        {!isAuthenticated ? (
           <Link href="/sign-in">
             <Button>Log In</Button>
           </Link>

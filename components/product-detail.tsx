@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { addToCart } from "@/utils/addToCart";
 import { getCartItems } from "@/utils/getCartItems";
-import { useCartItemStore } from "@/store/useCartItemStore";
 
 type ProductDetailProps = {
   product: Product;
@@ -27,8 +26,6 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
   );
   const [quantity, setQuantity] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(false);
-
-  const { setTotalItems } = useCartItemStore();
 
   const handleAddToCart = () => {
     setLoading(true);
@@ -48,15 +45,9 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
     };
 
     addToCart(data, jwt)
-      .then(async (res) => {
+      .then((res) => {
         setLoading(false);
         toast.success("Added to Cart");
-        const cartItemList: ItemList[] = await getCartItems(user.id, jwt);
-        const totalItems = cartItemList.reduce(
-          (acc, item) => acc + item.quantity,
-          0
-        );
-        setTotalItems(totalItems);
         window.location.reload();
       })
       .catch((err) => {
