@@ -19,8 +19,8 @@ interface ImageData {
   id: number;
   attributes: {
     name: string;
-    alternativeText: null | string;
-    caption: null | string;
+    alternativeText: string | null;
+    caption: string | null;
     width: number;
     height: number;
     formats: {
@@ -32,7 +32,7 @@ interface ImageData {
     mime: string;
     size: number;
     url: string;
-    previewUrl: null | string;
+    previewUrl: string | null;
     provider: string;
     provider_metadata: {
       public_id: string;
@@ -40,6 +40,27 @@ interface ImageData {
     };
     createdAt: string;
     updatedAt: string;
+  };
+}
+
+interface Product {
+  id: number;
+  attributes: {
+    name: string;
+    description: string;
+    mrp: number;
+    sellingPrice: number;
+    itemQuantityType: string;
+    slug: string;
+    createdAt: string;
+    updatedAt: string;
+    publishedAt: string;
+    images: {
+      data: ImageData[];
+    };
+    categories: {
+      data: Category[];
+    };
   };
 }
 
@@ -71,27 +92,6 @@ interface Slider {
   };
 }
 
-interface Product {
-  id: number;
-  attributes: {
-    name: string;
-    description: string;
-    mrp: number;
-    sellingPrice: number;
-    itemQuantityType: string;
-    slug: string;
-    createdAt: string;
-    updatedAt: string;
-    publishedAt: string;
-    images: {
-      data: ImageData[];
-    };
-    categories: {
-      data: Category[];
-    };
-  };
-}
-
 interface UserData {
   id: number;
   email: string;
@@ -103,6 +103,26 @@ interface UserData {
   updatedAt: string;
 }
 
+interface CartItem {
+  data: {
+    quantity: number;
+    amount: string;
+    products: number;
+    users_permissions_user: number;
+    userId: number;
+  };
+}
+
+interface ItemList {
+  quantity: number;
+  amount: number;
+  id: number;
+  image: string;
+  mrp: number;
+  sellingPrice: number;
+  name: string;
+}
+
 interface Item {
   id: number;
   attributes: {
@@ -112,19 +132,11 @@ interface Item {
     updatedAt: string;
     publishedAt: string;
     userId: number;
-    products: Product[];
+    products: {
+      data: Product[];
+    };
   };
   length: number;
-}
-
-interface CartItem {
-  data: {
-    quantity: number;
-    amount: string;
-    products: number;
-    users_permissions_user: number;
-    userId: number;
-  };
 }
 
 interface Pagination {

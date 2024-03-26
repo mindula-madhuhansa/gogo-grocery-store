@@ -30,18 +30,6 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
 
   const { setTotalItems } = useCartItemStore();
 
-  useEffect(() => {
-    const jwt = sessionStorage.getItem("jwt");
-    const user: UserData = JSON.parse(sessionStorage.getItem("user") || "");
-
-    const fetchCartItems = async () => {
-      const cartItemList: Item = await getCartItems(user.id, jwt);
-      setTotalItems(cartItemList.length);
-    };
-
-    fetchCartItems();
-  }, [setTotalItems]);
-
   const handleAddToCart = () => {
     setLoading(true);
     if (!jwt || !user) {
@@ -60,10 +48,16 @@ export const ProductDetail = ({ product }: ProductDetailProps) => {
     };
 
     addToCart(data, jwt)
-      .then((res) => {
+      .then(async (res) => {
         setLoading(false);
-        setTotalItems(1);
         toast.success("Added to Cart");
+        const cartItemList: ItemList[] = await getCartItems(user.id, jwt);
+        const totalItems = cartItemList.reduce(
+          (acc, item) => acc + item.quantity,
+          0
+        );
+
+        setTotalItems(totalItems);
       })
       .catch((err) => {
         console.log(err);
