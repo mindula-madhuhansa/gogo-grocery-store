@@ -1,15 +1,16 @@
 "use client";
 
-import { ArrowBigRight } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { PayPalButtons, usePayPalScriptReducer } from "@paypal/react-paypal-js";
+import { Loader } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { getCartItems } from "@/utils/getCartItems";
-import { useRouter } from "next/navigation";
 
 const CheckoutPage = () => {
   const router = useRouter();
+  const [{ isPending }] = usePayPalScriptReducer();
 
   const [cartItemList, setCartItemList] = useState<ItemList[]>([]);
   const [subtotal, setSubtotal] = useState(0);
@@ -18,11 +19,14 @@ const CheckoutPage = () => {
   const [phone, setPhone] = useState<string>();
   const [zip, setZip] = useState<string>();
   const [address, setAddress] = useState<string>();
+  const [total, setTotal] = useState<string>();
 
   const jwt = sessionStorage.getItem("jwt");
   const user = JSON.parse(sessionStorage.getItem("user")!);
 
   useEffect(() => {
+    const jwt = sessionStorage.getItem("jwt");
+    const user = JSON.parse(sessionStorage.getItem("user")!);
     if (!jwt || !user) {
       router.push("/sign-in");
     }
@@ -37,10 +41,11 @@ const CheckoutPage = () => {
     setSubtotal(total);
   }, [cartItemList]);
 
-  const calculateTotalAmount = () => {
-    const totalAmount = subtotal * 1.15 + 300;
-    return totalAmount;
-  };
+  useEffect(() => {
+    const totalAmount = (subtotal * 1.15 + 300).toFixed(2);
+    setTotal(totalAmount);
+  }, [subtotal]);
+
   const getCartItemsList = async () => {
     const cartItemsList_ = await getCartItems(user.id, jwt);
     setCartItemList(cartItemsList_);
@@ -100,11 +105,26 @@ const CheckoutPage = () => {
             </h2>
             <hr />
             <h2 className="font-bold flex justify-between">
-              Total: <span>Rs. {calculateTotalAmount().toFixed(2)}</span>
+              Total: <span>Rs. {total}</span>
             </h2>
-            <Button>
-              Payment <ArrowBigRight className="ml-3" fill="currentColor" />
-            </Button>
+            {isPending ? (
+              <Loader className="w-full h-5 animate-spin text-black mt-3" />
+            ) : (
+              <PayPalButtons
+                style={{ layout: "horizontal" }}
+                // createOrder={(data, actions) => {
+                //   return actions.order.create({
+                //     purchase_units: [
+                //       {
+                //         amount: {
+                //           value: total,
+                //         },
+                //       },
+                //     ],
+                //   });
+                // }}
+              />
+            )}
           </div>
         </div>
       </div>

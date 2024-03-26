@@ -4,6 +4,7 @@ import "../globals.css";
 
 import { Header } from "@/components/header";
 import { Toaster } from "@/components/ui/sonner";
+import { PayPalProvider } from "@/components/PayPalProvider";
 
 const josefin = Josefin_Sans({ subsets: ["latin"] });
 
@@ -18,12 +19,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={josefin.className}>
-        <Header />
-        {children}
-        <Toaster />
-      </body>
-    </html>
+    <PayPalProvider>
+      <html lang="en">
+        <body className={josefin.className}>
+          <Header />
+          {children}
+          <Toaster />
+        </body>
+      </html>
+    </PayPalProvider>
   );
 }
