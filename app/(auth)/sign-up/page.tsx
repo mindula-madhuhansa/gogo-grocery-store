@@ -4,39 +4,40 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { Loader } from "lucide-react";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { registerUser } from "@/utils/registerUser";
-import { useRouter } from "next/navigation";
-import { useAuthStore } from "@/store/useAuthStore";
 
 const SignUpPage = () => {
   const router = useRouter();
   const [username, setUsername] = useState<string>();
   const [email, setEmail] = useState<string>();
   const [password, setPassword] = useState<string>();
-
-  const { setIsLogin } = useAuthStore();
+  const [loader, setLoader] = useState(false);
 
   useEffect(() => {
     const jwtToken = sessionStorage.getItem("jwt");
     if (jwtToken) {
-      setIsLogin();
       router.push("/");
     }
-  }, [setIsLogin, router]);
+  }, [router]);
 
   const handleSignUp = () => {
+    setLoader(true);
     registerUser({ username, email, password })
       .then((response) => {
         sessionStorage.setItem("user", JSON.stringify(response.data.user));
         sessionStorage.setItem("jwt", response.data.jwt);
         toast.success("Account created successfully");
 
+        setLoader(false);
         router.push("/");
       })
       .catch((error) => {
+        setLoader(false);
         toast.error("Something went wrong. Try again.");
       });
   };
@@ -69,7 +70,7 @@ const SignUpPage = () => {
             disabled={!username || !email || !password}
             onClick={() => handleSignUp()}
           >
-            Sign Up
+            {loader ? <Loader className="h-5 w-5 animate-spin" /> : "Sign Up"}
           </Button>
           <p className="text-xs text-right">
             Already have an account?{" "}

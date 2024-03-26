@@ -4,39 +4,40 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { Loader } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { signInUser } from "@/utils/signinUser";
-import { useRouter } from "next/navigation";
-import { useAuthStore } from "@/store/useAuthStore";
 
 const SignInPage = () => {
   const router = useRouter();
   const [email, setEmail] = useState<string>();
   const [password, setPassword] = useState<string>();
-
-  const { setIsLogin } = useAuthStore();
+  const [loader, setLoader] = useState(false);
 
   useEffect(() => {
     const jwtToken = sessionStorage.getItem("jwt");
     if (jwtToken) {
-      setIsLogin();
       router.push("/");
     }
-  }, [setIsLogin, router]);
+  }, [router]);
 
   const handleSignIn = () => {
+    setLoader(true);
     signInUser({ email, password })
       .then((res) => {
         sessionStorage.setItem("user", JSON.stringify(res.data.user));
         sessionStorage.setItem("jwt", res.data.jwt);
         toast.success("Signed in Successful");
 
+        setLoader(false);
         router.push("/");
       })
-      .catch((error) => {
-        toast.error("Something went wrong. Try again.");
+      .catch((err: any) => {
+        setLoader(false);
+        toast.error("Email or password is wrong");
       });
   };
 
@@ -61,7 +62,7 @@ const SignInPage = () => {
             type="password"
           />
           <Button disabled={!email || !password} onClick={() => handleSignIn()}>
-            Sign In
+            {loader ? <Loader className="h-5 w-5 animate-spin" /> : "Sign In"}
           </Button>
           <p className="text-xs text-right">
             Don&apos;t have an account?{" "}

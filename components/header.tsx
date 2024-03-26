@@ -9,6 +9,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -20,13 +21,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { getCategories } from "@/utils/getCategories";
-import { useAuthStore } from "@/store/useAuthStore";
-import { useRouter } from "next/navigation";
 
 export const Header = () => {
   const router = useRouter();
   const [categoryData, setCategoryData] = useState<Category[]>([]);
-  const { isLogin } = useAuthStore();
+  const [isLogin, setIsLogin] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -34,6 +33,11 @@ export const Header = () => {
       setCategoryData(categories);
     };
     fetchCategories();
+
+    const jwtToken = sessionStorage.getItem("jwt");
+    if (jwtToken) {
+      setIsLogin(true);
+    }
   }, []);
 
   const handleSignOut = () => {
