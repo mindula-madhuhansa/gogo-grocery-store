@@ -1,6 +1,14 @@
-import { LayoutGrid, SearchIcon, ShoppingBag } from "lucide-react";
+"use client";
+
+import {
+  LayoutGrid,
+  SearchIcon,
+  ShoppingBag,
+  UserCircleIcon,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -12,9 +20,26 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { getCategories } from "@/utils/getCategories";
+import { useAuthStore } from "@/store/useAuthStore";
+import { useRouter } from "next/navigation";
 
-export const Header = async () => {
-  const categoryData: Category[] = await getCategories();
+export const Header = () => {
+  const router = useRouter();
+  const [categoryData, setCategoryData] = useState<Category[]>([]);
+  const { isLogin } = useAuthStore();
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const categories = await getCategories();
+      setCategoryData(categories);
+    };
+    fetchCategories();
+  }, []);
+
+  const handleSignOut = () => {
+    sessionStorage.clear();
+    router.push("/sign-in");
+  };
 
   return (
     <header className="flex items-center justify-between p-6 shadow-sm">
@@ -63,7 +88,27 @@ export const Header = async () => {
         <h3 className="flex items-center gap-x-2 text-lg">
           <ShoppingBag className="h-5 w-5" /> 0
         </h3>
-        <Button>Log In</Button>
+
+        {!isLogin ? (
+          <Link href="/sign-in">
+            <Button>Log In</Button>
+          </Link>
+        ) : (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <UserCircleIcon className="h-8 w-8 text-primary fill-green-200 cursor-pointer" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>Profile</DropdownMenuItem>
+              <DropdownMenuItem>Orders</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleSignOut()}>
+                Sign Out
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
       </div>
     </header>
   );

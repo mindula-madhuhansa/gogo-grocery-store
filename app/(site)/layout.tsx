@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Josefin_Sans } from "next/font/google";
-import "./globals.css";
+import "../globals.css";
+
 import { Header } from "@/components/header";
+import { Toaster } from "@/components/ui/sonner";
 
 const josefin = Josefin_Sans({ subsets: ["latin"] });
 
@@ -20,6 +22,7 @@ export default function RootLayout({
       <body className={josefin.className}>
         <Header />
         {children}
+        <Toaster />
       </body>
     </html>
   );
